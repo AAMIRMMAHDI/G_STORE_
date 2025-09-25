@@ -1,0 +1,1082 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طعم روستا - فروشگاه مواد محلی و لبنیات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4eaf4a;
+            --primary-dark: #3d8b3a;
+            --secondary: #ff9f1c;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --gray: #dfe6e9;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazir', sans-serif;
+        }
+
+        body {
+            background-color: #fcfcfc;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* هدر */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+
+        nav a:hover:after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-actions a {
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .header-actions a:hover {
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .cart-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .cart-count {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
+        /* بخش هیرو */
+        .hero {
+            padding: 100px 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('{% static "images/hero-bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 175, 74, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 175, 74, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* بخش ویژگی‌ها */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: #777;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(78, 175, 74, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .feature-icon i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: #666;
+        }
+
+        /* بخش درباره ما */
+        .about {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-text {
+            padding: 20px;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .about-image {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* بخش محصولات */
+        .products {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .product-info h3 a {
+            text-decoration: none;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+
+        .product-info h3 a:hover {
+            color: var(--primary);
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .product-price {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .add-to-cart {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-to-cart:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* بخش دسته‌بندی‌ها */
+        .categories {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            position: relative;
+            height: 200px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            cursor: pointer;
+        }
+
+        .category-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .category-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .category-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 20px;
+            color: white;
+        }
+
+        .category-overlay h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        /* بخش تماس با ما */
+        .contact {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .contact p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .contact-form .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .contact-form label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 8px rgba(78, 175, 74, 0.2);
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .contact-form button {
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .contact-form button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 175, 74, 0.4);
+        }
+
+        /* فوتر */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-col p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary);
+            padding-right: 5px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 992px) {
+            nav ul {
+                gap: 15px;
+            }
+            
+            .hero h2 {
+                font-size: 2.8rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .contact-form {
+                padding: 20px;
+            }
+        }
+
+        /* انیمیشن‌ها */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- هدر -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="{% url 'root:home' %}" class="logo">
+                    <i class="fas fa-cheese"></i>
+                    <h1>طعم روستا</h1>
+                </a>
+                
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'root:home' %}">خانه</a></li>
+                        <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+                        <li><a href="#about">درباره ما</a></li>
+                        <li><a href="#contact">تماس با ما</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="{% url 'cart:cart' %}" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cart-count">{{ cart_count|default:0 }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- بخش هیرو -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>طعم اصیل روستا در قلب شهر</h2>
+                <p>محصولات لبنی تازه و طبیعی را مستقیم از دامداری‌های محلی به دست شما می‌رسانیم. کیفیتی که شایسته شماست.</p>
+                <div class="hero-buttons">
+                    <a href="{% url 'products:product_list' %}" class="btn btn-primary">
+                        <i class="fas fa-shopping-basket"></i> مشاهده محصولات
+                    </a>
+                    <a href="#about" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i> درباره ما
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش ویژگی‌ها -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>چرا ما را انتخاب کنید؟</h2>
+                <p>ما با عشق و تعهد محصولات لبنی باکیفیت را برای شما فراهم می‌کنیم</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>تحویل سریع</h3>
+                    <p>محصولات تازه را در کمترین زمان ممکن به دست شما می‌رسانیم</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>طبیعی و سالم</h3>
+                    <p>همه محصولات کاملاً طبیعی و فاقد مواد نگهدارنده هستند</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>کیفیت برتر</h3>
+                    <p>کیفیت محصولات ما توسط متخصصین تغذیه تأیید شده است</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش درباره ما -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>درباره طعم روستا</h2>
+                <p>داستانی از عشق به طبیعت و کیفیت</p>
+            </div>
+            <div class="about-content fade-in">
+                <div class="about-text">
+                    <h2>ما که هستیم؟</h2>
+                    <p>طعم روستا در سال ۱۴۰۰ با هدف ارائه محصولات لبنی تازه و طبیعی تأسیس شد. ما با همکاری مستقیم با دامداری‌های محلی، بهترین محصولات را با کیفیت بی‌نظیر به مشتریان خود ارائه می‌دهیم. هدف ما حفظ اصالت و طعم واقعی محصولات روستایی است.</p>
+                    <p>از مزارع سرسبز تا سفره‌های شما، ما به کیفیت و سلامت محصولاتمان افتخار می‌کنیم. با طعم روستا، طعم واقعی طبیعت را تجربه کنید.</p>
+                    <a href="#contact" class="btn btn-primary">
+                        <i class="fas fa-envelope"></i> تماس با ما
+                    </a>
+                </div>
+                <div class="about-image">
+                    <img src="https://nevisesh.com/blog/wp-content/uploads/2020/04/10-%D8%B5%D9%81%D8%AD%D9%87-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D9%85%D8%A7%D8%8C-%D8%A7%D8%B2-%D8%B3%DB%8C%D8%B1-%D8%AA%D8%A7-%D9%BE%DB%8C%D8%A7%D8%B2-.jpg" alt="درباره طعم روستا">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش محصولات -->
+    <section class="products">
+        <div class="container">
+            <div class="section-title">
+                <h2>محصولات پرفروش</h2>
+                <p>پرمخاطب‌ترین محصولات ما که مشتریان عاشق آن هستند</p>
+            </div>
+            
+            <div class="products-grid">
+                {% for product in popular_products %}
+                    <div class="product-card fade-in">
+                        <div class="product-image">
+                            {% if product.main_image %}
+                                <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                <img src="{% static 'images/default.jpg' %}" alt="تصویر پیش‌فرض">
+                            {% endif %}
+                            {% if product.is_new %}
+                                <span class="product-badge">جدید</span>
+                            {% elif product.is_popular %}
+                                <span class="product-badge">پرفروش</span>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3><a href="{% url 'products:product_detail' product.id %}">{{ product.name }}</a></h3>
+                            <p>{{ product.description|truncatewords:10 }}</p>
+                            <div class="product-meta">
+                                <div class="product-price">
+                                    {% with packaging=product.packagings.first %}
+                                        {% if packaging %}
+                                            {{ packaging.price|intcomma }} تومان
+                                        {% else %}
+                                            ناموجود
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                                <form action="{% url 'cart:add_to_cart' product.id %}" method="POST" class="add-to-cart-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    {% with packaging=product.packagings.first %}
+                                        {% if packaging %}
+                                            <input type="hidden" name="packaging_id" value="{{ packaging.id }}">
+                                            <button type="submit" class="add-to-cart">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        {% endif %}
+                                    {% endwith %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>هیچ محصولی یافت نشد.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش دسته‌بندی‌ها -->
+    <section class="categories">
+        <div class="container">
+            <div class="section-title">
+                <h2>دسته‌بندی محصولات</h2>
+                <p>محصولات ما را بر اساس نوع دسته‌بندی شده‌اند</p>
+            </div>
+            
+            <div class="categories-grid">
+                {% for category in categories %}
+                    <div class="category-card fade-in">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                        {% else %}
+                            <img src="{% static 'images/default.jpg' %}" alt="تصویر پیش‌فرض">
+                        {% endif %}
+                        <div class="category-overlay">
+                            <h3>{{ category.name }}</h3>
+                            <p>{{ category.products.count }} محصول</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>هیچ دسته‌بندی یافت نشد.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش تماس با ما -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>تماس با ما</h2>
+                <p>ما مشتاق شنیدن نظرات و سؤالات شما هستیم. با ما در ارتباط باشید!</p>
+            </div>
+            <form class="contact-form fade-in" action="" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">نام و نام خانوادگی</label>
+                    <input type="text" id="name" name="name" placeholder="نام خود را وارد کنید" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">ایمیل</label>
+                    <input type="email" id="email" name="email" placeholder="ایمیل خود را وارد کنید" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">پیام شما</label>
+                    <textarea id="message" name="message" placeholder="پیام خود را بنویسید" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> ارسال پیام
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- فوتر -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>درباره طعم روستا</h3>
+                    <p>ما با عشق و افتخار محصولات لبنی تازه و طبیعی را مستقیم از دامداری‌های محلی به دست شما می‌رسانیم.</p>
+                    <div class="social-icons">
+                        <a href="#" class="fab fa-instagram"></a>
+                        <a href="#" class="fab fa-telegram"></a>
+                        <a href="#" class="fab fa-whatsapp"></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>لینک‌های مفید</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'root:home' %}">خانه</a></li>
+                        <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+                        <li><a href="#about">درباره ما</a></li>
+                        <li><a href="#contact">تماس با ما</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>دسته‌بندی محصولات</h3>
+                    <ul class="footer-links">
+                        {% for category in categories %}
+                            <li><a href="{% url 'products:product_list' %}?category={{ category.id }}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>تماس با ما</h3>
+                    <p>آدرس: تهران، خیابان ولیعصر، کوچه فلان، پلاک ۱۲۳</p>
+                    <p>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                    <p>ایمیل: info@tameroosta.ir</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© ۱۴۰۴ کلیه حقوق برای طعم روستا محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // تابع برای دریافت توکن CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // انیمیشن اسکرول
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.style.opacity = 1;
+                    }
+                });
+            };
+            
+            fadeElements.forEach(element => {
+                element.style.opacity = 0;
+                element.style.transition = 'opacity 0.5s ease';
+            });
+            
+            window.addEventListener('scroll', fadeInOnScroll);
+            fadeInOnScroll();
+
+            // مدیریت فرم‌های اضافه به سبد خرید
+            document.querySelectorAll('.add-to-cart-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrftoken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.querySelector('.cart-count').textContent = data.cart_count;
+                            alert('محصول به سبد خرید اضافه شد!');
+                        } else {
+                            alert(data.error || 'خطایی رخ داد.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('خطایی در ارتباط با سرور رخ داد.');
+                    });
+                });
+            });
+
+            // مدیریت فرم تماس
+            const contactForm = document.querySelector('.contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrftoken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('پیام شما با موفقیت ارسال شد!');
+                            contactForm.reset();
+                        } else {
+                            alert(data.error || 'خطایی در ارسال پیام رخ داد.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('خطایی در ارتباط با سرور رخ داد.');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

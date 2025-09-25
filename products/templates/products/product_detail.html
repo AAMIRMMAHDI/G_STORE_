@@ -1,0 +1,1091 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - طعم روستا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: 'Vazir';
+            src: url('{% static "fonts/Vazir-Regular.woff2" %}') format('woff2');
+        }
+        :root {
+            --primary: #4eaf4a;
+            --primary-dark: #3d8b3a;
+            --secondary: #ff9f1c;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --gray: #dfe6e9;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazir', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fcfcfc;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* استایل‌های هدر از کد دوم */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo::before {
+            content: '🧀';
+            font-size: 2.2rem;
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+
+        nav a:hover:after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-actions a {
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .header-actions a:hover {
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .cart-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .cart-count {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
+        /* استایل‌های باقی‌مانده از کد اول (برای بخش‌های غیر هدر و فوتر) */
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+            margin-top: 40px;
+        }
+
+        .product-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 400px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .main-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .thumbnail-images {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .thumbnail.active {
+            border-color: var(--primary);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px 0;
+        }
+
+        .product-title {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--secondary);
+        }
+
+        .product-rating span {
+            font-size: 0.9rem;
+        }
+
+        .product-review {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .packaging-selector {
+            margin-bottom: 20px;
+        }
+
+        .packaging-selector label {
+            font-weight: bold;
+            margin-left: 10px;
+            color: #666;
+        }
+
+        .packaging-selector select {
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray);
+            background: white;
+            cursor: pointer;
+        }
+
+        .product-description {
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .product-details-list {
+            margin-bottom: 30px;
+        }
+
+        .detail-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            width: 120px;
+            color: #666;
+        }
+
+        .detail-value {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            background: #f5f5f5;
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quantity-btn:hover {
+            background: #e9e9e9;
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            border: none;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 175, 74, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 175, 74, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .product-tabs {
+            margin-bottom: 60px;
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content ul {
+            list-style: none;
+            margin-right: 20px;
+        }
+
+        .tab-content li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .tab-content li:before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            right: -15px;
+        }
+
+        .related-products {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: #777;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-info-small {
+            padding: 20px;
+        }
+
+        .product-info-small h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .product-info-small h3 a {
+            text-decoration: none;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+
+        .product-info-small h3 a:hover {
+            color: var(--primary);
+        }
+
+        .product-meta-small {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .product-price-small {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .add-to-cart {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-to-cart:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* استایل‌های فوتر از کد دوم */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-col p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary);
+            padding-right: 5px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .social-icons a::before {
+            font-family: 'Vazir', Arial, sans-serif;
+        }
+
+        .social-icons a.instagram::before {
+            content: '📷';
+        }
+
+        .social-icons a.telegram::before {
+            content: '✈️';
+        }
+
+        .social-icons a.whatsapp::before {
+            content: '💬';
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 992px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+            }
+            .thumbnail-images {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-title {
+                font-size: 1.8rem;
+            }
+            .product-actions {
+                flex-direction: column;
+            }
+            .tabs-header {
+                flex-direction: column;
+            }
+            .tab-btn {
+                text-align: right;
+                border-bottom: 1px solid #eee;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            nav ul {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .header-actions {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- هدر اصلاح‌شده -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div href="{% url 'root:home' %}" class="logo">
+                    <h1>طعم روستا</h1>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'root:home' %}">خانه</a></li>
+                        <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="{% url 'cart:cart' %}" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cart-count">{{ cart_count }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="product-detail">
+            <!-- گالری تصاویر -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" id="main-img">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" alt="تصویر پیش‌فرض" id="main-img">
+                    {% endif %}
+                </div>
+                <div class="thumbnail-images">
+                    {% for image in product.images.all %}
+                        <div class="thumbnail {% if image.image.url == product.main_image.url %}active{% endif %}" data-image="{{ image.image.url }}">
+                            <img src="{{ image.image.url }}" alt="{{ product.name }}">
+                        </div>
+                    {% endfor %}
+                    {% if product.main_image %}
+                        {% with main_image_in_images=0 %}
+                            {% for image in product.images.all %}
+                                {% if image.image.url == product.main_image.url %}
+                                    {% with main_image_in_images=1 %}
+                                    {% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if main_image_in_images == 0 %}
+                                <div class="thumbnail active" data-image="{{ product.main_image.url }}">
+                                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- اطلاعات محصول -->
+            <div class="product-info">
+                <h1 class="product-title">{{ product.name }}</h1>
+                <div class="product-meta">
+                    <div class="product-rating">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= product.rating|floatformat:0 %}
+                                <span>★</span>
+                            {% elif product.rating|floatformat:1|slice:"2:" == ".5" and forloop.counter == product.rating|floatformat:0|add:1 %}
+                                <span>½</span>
+                            {% else %}
+                                <span>☆</span>
+                            {% endif %}
+                        {% endfor %}
+                        <span>{{ product.rating }}</span>
+                    </div>
+                    <div class="product-review">({{ product.review_count }} نظر)</div>
+                </div>
+                <div class="packaging-selector">
+                    <label for="packaging">انتخاب بسته‌بندی:</label>
+                    <select id="packaging" onchange="updatePrice()">
+                        {% for packaging in product.packagings.all %}
+                            <option value="{{ packaging.price }}" data-weight="{{ packaging.weight }}" data-id="{{ packaging.id }}">
+                                {{ packaging.weight }} - {{ packaging.price }} تومان
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="product-price" id="product-price">{{ product.packagings.first.price }} تومان</div>
+                <p class="product-description">{{ product.description }}</p>
+                
+                <div class="product-details-list">
+                    <div class="detail-item">
+                        <div class="detail-label">موجودی:</div>
+                        <div class="detail-value">{% if product.is_available %}در انبار موجود است{% else %}ناموجود{% endif %}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">دسته‌بندی:</div>
+                        <div class="detail-value">
+                            {% for category in product.categories.all %}
+                                {{ category.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <div class="quantity-selector">
+                        <button class="quantity-btn minus-btn">-</button>
+                        <input type="number" class="quantity-input" value="1" min="1" max="10">
+                        <button class="quantity-btn plus-btn">+</button>
+                    </div>
+                    <button class="btn btn-primary add-to-cart-btn" data-product-id="{{ product.id }}">
+                        <span>🛒</span> افزودن به سبد خرید
+                    </button>
+                    <button class="btn btn-secondary">
+                        <span>♥</span> افزودن به علاقه‌مندی‌ها
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- تب‌های اطلاعات محصول -->
+        <div class="product-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">توضیحات محصول</button>
+                <button class="tab-btn" data-tab="details">مشخصات فنی</button>
+            </div>
+            
+            <div class="tab-content active" id="description">
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <div class="tab-content" id="details">
+                <div class="detail-item">
+                    <div class="detail-label">مواد تشکیل‌دهنده:</div>
+                    <div class="detail-value">{{ product.ingredients }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">روش نگهداری:</div>
+                    <div class="detail-value">{{ product.storage_method }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">مدت زمان ماندگاری:</div>
+                    <div class="detail-value">{{ product.shelf_life }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">ارزش غذایی در هر 100 گرم:</div>
+                    <div class="detail-value">{{ product.nutritional_info }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- محصولات مشابه -->
+        <section class="related-products">
+            <div class="section-title">
+                <h2>محصولات مشابه</h2>
+                <p>شاید این محصولات نیز مورد علاقه شما باشد</p>
+            </div>
+            
+            <div class="products-grid">
+                {% for related in related_products %}
+                <div class="product-card fade-in">
+                    <a href="{% url 'products:product_detail' related.id %}">
+                        <div class="product-image">
+                            {% if related.main_image %}
+                                <img src="{{ related.main_image.url }}" alt="{{ related.name }}">
+                            {% else %}
+                                <img src="{% static 'images/default.jpg' %}" alt="تصویر پیش‌فرض">
+                            {% endif %}
+                            {% if related.name == "شیر تازه گاو" %}
+                                <span class="product-badge">جدید</span>
+                            {% elif related.name == "پنیر لیقوان" %}
+                                <span class="product-badge">پرفروش</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                    <div class="product-info-small">
+                        <h3><a href="{% url 'products:product_detail' related.id %}">{{ related.name }}</a></h3>
+                        <p>{{ related.description|truncatechars:50 }}</p>
+                        <div class="product-meta-small">
+                            <div class="product-price-small">{{ related.packagings.first.price }} تومان</div>
+                            <button class="add-to-cart" data-product-id="{{ related.id }}">
+                                <span>➕</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <!-- فوتر اصلاح‌شده -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>درباره طعم روستا</h3>
+                    <p>ما با عشق و افتخار محصولات لبنی تازه و طبیعی را مستقیم از دامداری‌های محلی به دست شما می‌رسانیم.</p>
+                    <div class="social-icons">
+                        <a href="#" class="instagram"></a>
+                        <a href="#" class="telegram"></a>
+                        <a href="#" class="whatsapp"></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>لینک‌های مفید</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'root:home' %}">خانه</a></li>
+                        <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>دسته‌بندی محصولات</h3>
+                    <ul class="footer-links">
+                        {% for category in categories %}
+                            <li><a href="{% url 'products:product_list' %}?category={{ category.id }}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>تماس با ما</h3>
+                    <p>آدرس: تهران، خیابان ولیعصر، کوچه فلان، پلاک ۱۲۳</p>
+                    <p>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                    <p>ایمیل: info@tameroosta.ir</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© ۱۴۰۴ کلیه حقوق برای طعم روستا محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // تابع برای دریافت توکن CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // تغییر تصویر اصلی
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            const mainImg = document.getElementById('main-img');
+            
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    const newSrc = this.getAttribute('data-image');
+                    mainImg.src = newSrc;
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // کنترل تعداد محصول
+            const minusBtn = document.querySelector('.minus-btn');
+            const plusBtn = document.querySelector('.plus-btn');
+            const quantityInput = document.querySelector('.quantity-input');
+            
+            minusBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+            
+            plusBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 10) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+            
+            // تغییر قیمت با انتخاب بسته‌بندی
+            function updatePrice() {
+                const select = document.getElementById('packaging');
+                const priceElement = document.getElementById('product-price');
+                priceElement.textContent = select.value + ' تومان';
+            }
+            
+            document.getElementById('packaging').addEventListener('change', updatePrice);
+            
+            // سیستم تب‌ها
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // انیمیشن اسکرول برای محصولات مشابه
+            const fadeElements = document.querySelectorAll('.fade-in');
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.style.opacity = 1;
+                    }
+                });
+            };
+            
+            fadeElements.forEach(element => {
+                element.style.opacity = 0;
+                element.style.transition = 'opacity 0.5s ease';
+            });
+            
+            window.addEventListener('scroll', fadeInOnScroll);
+            fadeInOnScroll();
+
+            // افزودن به سبد خرید
+            const addToCartButtons = document.querySelectorAll('.add-to-cart, .add-to-cart-btn');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const packagingSelect = document.getElementById('packaging');
+                    const packagingId = packagingSelect ? packagingSelect.options[packagingSelect.selectedIndex].getAttribute('data-id') : null;
+                    const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+                    fetch("{% url 'cart:add_to_cart' 0 %}".replace('0', productId), {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrftoken,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            'packaging_id': packagingId,
+                            'quantity': quantity
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('cart-count').textContent = data.cart_count;
+                            alert('محصول به سبد خرید اضافه شد!');
+                        } else {
+                            alert('خطا: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('خطایی رخ داد. لطفاً دوباره تلاش کنید.');
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

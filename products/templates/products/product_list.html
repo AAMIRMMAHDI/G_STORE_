@@ -1,0 +1,1109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جستجو و فیلتر محصولات - طعم روستا</title>
+    <style>
+        @font-face {
+            font-family: 'Vazir';
+            src: url('{% static "fonts/Vazir-Regular.woff2" %}') format('woff2');
+        }
+        :root {
+            --primary: #4eaf4a;
+            --primary-dark: #3d8b3a;
+            --secondary: #ff9f1c;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --gray: #dfe6e9;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazir', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fcfcfc;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo::before {
+            content: '🧀';
+            font-size: 2.2rem;
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        nav a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+
+        nav a:hover:after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-actions a {
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .header-actions a:hover {
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .cart-count {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
+        .breadcrumb {
+            padding: 20px 0;
+            background: #f5f5f5;
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .breadcrumb li:not(:last-child):after {
+            content: '/';
+            margin-right: 10px;
+            color: #999;
+        }
+
+        .search-section {
+            padding: 40px 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            font-size: 1rem;
+            background: #f9f9f9;
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .search-btn::before {
+            content: '🔍';
+            margin-left: 8px;
+        }
+
+        .search-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .search-tag {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-tag:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .products-section {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .filters-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-title::after {
+            content: '▼';
+            font-size: 0.8rem;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-option input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+        }
+
+        .price-range {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .price-slider {
+            width: 100%;
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .price-slider-fill {
+            position: absolute;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 5px;
+            left: 0;
+            right: 0;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: #f0f0f0;
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .products-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .products-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sort-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card.list-view {
+            display: flex;
+            height: 200px;
+        }
+
+        .product-card.list-view .product-image {
+            width: 250px;
+            height: 100%;
+        }
+
+        .product-card.list-view .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .product-image {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .product-info h3 a {
+            text-decoration: none;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+
+        .product-info h3 a:hover {
+            color: var(--primary);
+        }
+
+        .product-info p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .product-price {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .add-to-cart {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-to-cart:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .add-to-cart::before {
+            content: '➕';
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 10px;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:hover:not(.active) {
+            background: #f5f5f5;
+        }
+
+        .page-btn.prev::before {
+            content: '▶';
+        }
+
+        .page-btn.next::before {
+            content: '◀';
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-col p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary);
+            padding-right: 5px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .social-icons a::before {
+            font-family: 'Vazir', Arial, sans-serif;
+        }
+
+        .social-icons a.instagram::before {
+            content: '📷';
+        }
+
+        .social-icons a.telegram::before {
+            content: '✈️';
+        }
+
+        .social-icons a.whatsapp::before {
+            content: '💬';
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 992px) {
+            .products-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 30px;
+            }
+
+            .filter-group {
+                display: none;
+            }
+
+            .filter-group.active {
+                display: block;
+            }
+
+            .filter-title {
+                cursor: pointer;
+            }
+
+            .mobile-filter-toggle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 15px;
+                background: var(--primary);
+                color: white;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                cursor: pointer;
+            }
+
+            .mobile-filter-toggle::before {
+                content: '⚙️';
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .products-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .products-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .product-card.list-view {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .product-card.list-view .product-image {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- هدر -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div href="{% url 'root:home' %}" class="logo">
+                    <i class="fas fa-cheese"></i>
+                    <h1>طعم روستا</h1>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'root:home' %}">خانه</a></li>
+                        <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="{% url 'cart:cart' %}" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="breadcrumb">
+        <div class="container">
+            <ul>
+                <li><a href="">خانه</a></li>
+                <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+                <li>جستجو و فیلتر محصولات</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="search-section">
+            <form method="GET" action="{% url 'products:product_list' %}">
+                <div class="search-container">
+                    <input type="text" name="q" class="search-input" placeholder="جستجو در محصولات..." value="{{ search_query }}">
+                    <button type="submit" class="search-btn">جستجو</button>
+                </div>
+            </form>
+            <div class="search-tags">
+                {% for tag in tags %}
+                    <span class="search-tag" onclick="searchByTag('{{ tag.name }}')">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="products-section">
+            <aside class="filters-sidebar">
+                <div class="mobile-filter-toggle">فیلترها</div>
+                
+                <form method="GET" action="{% url 'products:product_list' %}">
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                    <input type="hidden" name="sort" value="{{ sort }}">
+                    
+                    <div class="filter-group active">
+                        <div class="filter-title">دسته‌بندی‌ها</div>
+                        <div class="filter-options">
+                            {% for category in categories %}
+                                <div class="filter-option">
+                                    <input type="checkbox" id="category-{{ category.id }}" name="category" value="{{ category.id }}"
+                                        {% if category.id|stringformat:"s" in selected_categories %}checked{% endif %}>
+                                    <label for="category-{{ category.id }}">{{ category.name }} ({{ category.product_set.count }})</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-title">محدوده قیمت</div>
+                        <div class="price-range">
+                            <div class="price-inputs">
+                                <input type="number" name="min_price" class="price-input" placeholder="حداقل" value="{{ min_price }}">
+                                <input type="number" name="max_price" class="price-input" placeholder="حداکثر" value="{{ max_price }}">
+                            </div>
+                            <div class="price-slider">
+                                <div class="price-slider-fill" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-title">برچسب‌ها</div>
+                        <div class="filter-options">
+                            {% for tag in tags %}
+                                <div class="filter-option">
+                                    <input type="checkbox" id="tag-{{ tag.id }}" name="tag" value="{{ tag.id }}"
+                                        {% if tag.id|stringformat:"s" in selected_tags %}checked{% endif %}>
+                                    <label for="tag-{{ tag.id }}">{{ tag.name }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-title">امتیاز</div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="radio" id="rating-5" name="rating" value="5"
+                                    {% if rating == "5" %}checked{% endif %}>
+                                <label for="rating-5">★★★★★ (۵ ستاره)</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="radio" id="rating-4" name="rating" value="4"
+                                    {% if rating == "4" %}checked{% endif %}>
+                                <label for="rating-4">★★★★☆ (۴ ستاره و بالاتر)</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="radio" id="rating-3" name="rating" value="3"
+                                    {% if rating == "3" %}checked{% endif %}>
+                                <label for="rating-3">★★★☆☆ (۳ ستاره و بالاتر)</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="radio" id="rating-0" name="rating" value="0"
+                                    {% if rating == "0" %}checked{% endif %}>
+                                <label for="rating-0">همه</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-buttons">
+                        <button type="submit" class="btn btn-primary">اعمال فیلترها</button>
+                        <a href="{% url 'products:product_list' %}" class="btn btn-outline">پاک کردن</a>
+                    </div>
+                </form>
+            </aside>
+            
+            <div class="products-content">
+                <div class="products-header">
+                    <h2 class="products-title">همه محصولات ({{ products.paginator.count }} محصول)</h2>
+                    <div class="products-controls">
+                        <form method="GET" action="{% url 'products:product_list' %}">
+                            <input type="hidden" name="q" value="{{ search_query }}">
+                            {% for category in selected_categories %}
+                                <input type="hidden" name="category" value="{{ category }}">
+                            {% endfor %}
+                            {% for tag in selected_tags %}
+                                <input type="hidden" name="tag" value="{{ tag }}">
+                            {% endfor %}
+                            <input type="hidden" name="min_price" value="{{ min_price }}">
+                            <input type="hidden" name="max_price" value="{{ max_price }}">
+                            <input type="hidden" name="rating" value="{{ rating }}">
+                            <select name="sort" class="sort-select" onchange="this.form.submit()">
+                                <option value="newest" {% if sort == "newest" %}selected{% endif %}>جدیدترین</option>
+                                <option value="popular" {% if sort == "popular" %}selected{% endif %}>پرفروش‌ترین</option>
+                                <option value="price-low" {% if sort == "price-low" %}selected{% endif %}>قیمت (کم به زیاد)</option>
+                                <option value="price-high" {% if sort == "price-high" %}selected{% endif %}>قیمت (زیاد به کم)</option>
+                                <option value="name" {% if sort == "name" %}selected{% endif %}>نام محصول</option>
+                            </select>
+                        </form>
+                        <div class="view-options">
+                            <button class="view-btn active" data-view="grid">🟦</button>
+                            <button class="view-btn" data-view="list">📜</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="products-grid" id="products-container">
+                    {% for product in products %}
+                        <div class="product-card fade-in">
+                            <a href="{% url 'products:product_detail' product.pk %}">
+                                <div class="product-image">
+                                    {% if product.main_image %}
+                                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'images/default.jpg' %}" alt="تصویر پیش‌فرض">
+                                    {% endif %}
+                                    {% for tag in product.tags.all %}
+                                        {% if tag.name == "پرفروش" or tag.name == "جدید" or tag.name == "تخفیف‌دار" %}
+                                            <span class="product-badge">{{ tag.name }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </a>
+                            <div class="product-info">
+                                <h3><a href="{% url 'products:product_detail' product.pk %}">{{ product.name }}</a></h3>
+                                <p>{{ product.description|truncatechars:50 }}</p>
+                                <div class="product-meta">
+                                    <div class="product-price">{{ product.packagings.first.price }} تومان</div>
+                                <h3><a href="{% url 'products:product_detail' product.pk %}">➕</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>محصولی یافت نشد.</p>
+                    {% endfor %}
+                </div>
+                
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% for category in selected_categories %}category={{ category }}&{% endfor %}{% for tag in selected_tags %}tag={{ tag }}&{% endfor %}min_price={{ min_price }}&max_price={{ max_price }}&rating={{ rating }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}" class="page-btn prev"></a>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% for category in selected_categories %}category={{ category }}&{% endfor %}{% for tag in selected_tags %}tag={{ tag }}&{% endfor %}min_price={{ min_price }}&max_price={{ max_price }}&rating={{ rating }}&sort={{ sort }}&page={{ num }}" class="page-btn {% if page_obj.number == num %}active{% endif %}">{{ num }}</a>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% for category in selected_categories %}category={{ category }}&{% endfor %}{% for tag in selected_tags %}tag={{ tag }}&{% endfor %}min_price={{ min_price }}&max_price={{ max_price }}&rating={{ rating }}&sort={{ sort }}&page={{ page_obj.next_page_number }}" class="page-btn next"></a>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- فوتر -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>درباره طعم روستا</h3>
+                    <p>ما با عشق و افتخار محصولات لبنی تازه و طبیعی را مستقیم از دامداری‌های محلی به دست شما می‌رسانیم.</p>
+                    <div class="social-icons">
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>لینک‌های مفید</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'root:home' %}">خانه</a></li>
+                        <li><a href="{% url 'products:product_list' %}">محصولات</a></li>
+
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>دسته‌بندی محصولات</h3>
+                    <ul class="footer-links">
+                        {% for category in categories %}
+                            <li><a href="{% url 'products:product_list' %}?category={{ category.id }}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>تماس با ما</h3>
+                    <p>آدرس: تهران، خیابان ولیعصر، کوچه فلان، پلاک ۱۲۳</p>
+                    <p>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                    <p>ایمیل: info@tameroosta.ir</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© ۱۴۰۴ کلیه حقوق برای طعم روستا محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewBtns = document.querySelectorAll('.view-btn');
+            const productsContainer = document.getElementById('products-container');
+            
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const viewType = this.getAttribute('data-view');
+                    viewBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    productsContainer.className = 'fade-in';
+                    if (viewType === 'list') {
+                        productsContainer.classList.add('products-list');
+                        document.querySelectorAll('.product-card').forEach(card => {
+                            card.classList.add('list-view');
+                        });
+                    } else {
+                        productsContainer.classList.add('products-grid');
+                        document.querySelectorAll('.product-card').forEach(card => {
+                            card.classList.remove('list-view');
+                        });
+                    }
+                });
+            });
+            
+            const filterTitles = document.querySelectorAll('.filter-title');
+            const mobileFilterToggle = document.querySelector('.mobile-filter-toggle');
+            
+            if (window.innerWidth <= 992) {
+                filterTitles.forEach(title => {
+                    title.parentElement.classList.remove('active');
+                    title.addEventListener('click', function() {
+                        this.parentElement.classList.toggle('active');
+                    });
+                });
+                
+                mobileFilterToggle.addEventListener('click', function() {
+                    const filterGroups = document.querySelectorAll('.filter-group');
+                    const isVisible = filterGroups[0].classList.contains('active');
+                    filterGroups.forEach(group => {
+                        group.classList.toggle('active', !isVisible);
+                    });
+                });
+            }
+            
+            const searchTags = document.querySelectorAll('.search-tag');
+            const searchInput = document.querySelector('.search-input');
+            
+            window.searchByTag = function(tag) {
+                searchInput.value = tag;
+                searchInput.form.submit();
+            };
+            
+            const fadeElements = document.querySelectorAll('.fade-in');
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.style.opacity = 1;
+                    }
+                });
+            };
+            
+            fadeElements.forEach(element => {
+                element.style.opacity = 0;
+                element.style.transition = 'opacity 0.5s ease';
+            });
+            
+            window.addEventListener('scroll', fadeInOnScroll);
+            fadeInOnScroll();
+        });
+    </script>
+</body>
+</html>
